@@ -36,7 +36,7 @@ const RestaurantSchema = {
   properties: {
     name: {
       bsonType: "string",
-      description: "The name of the user"
+      description: "The name of the restaurant"
     },
     merchantId: {
       bsonType: "objectId",
@@ -76,9 +76,8 @@ const BranchSchema = {
   }
 }
 
-// return all schemas as array
-module.exports = [
+export default [
   UserSchema,
-  RestaurantSchema,
-  BranchSchema
+  BranchSchema,
+  RestaurantSchema
 ]

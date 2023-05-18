@@ -1,14 +1,13 @@
+import logger from './logger.js';
+import firebase from 'firebase-admin';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase-admin/auth';
 
-const logger = require('turbo-logger').createStream({});
-const firebase = require('firebase-admin');
-const { initializeApp } = require('firebase/app');
-const { getAuth } = require('firebase-admin/auth');
-
-
-class FirebaseClient {
+export default class FirebaseClient {
   constructor(config) {
     this.config = config;
   }
+
   initFirebaseAdmin() {
     try {
       if (!firebase.apps.length) {
@@ -26,11 +25,13 @@ class FirebaseClient {
 
   async createUser(data) {
     try {
-      return getAuth().createUser({
+      const createdUser = await getAuth().createUser({
         email: data.email,
         password: data.password,
         displayName: data.displayName,
       });
+      // set eatlyUserId as custom claim
+      await this.initFirebaseAdmin().auth().setCustomUserClaims(createdUser.uid, { eatlyUserId: data.id });
     } catch (error) {
       logger.error('unable to create user', error);
       throw error;
@@ -46,5 +47,3 @@ class FirebaseClient {
     }
   };
 }
-
-module.exports = FirebaseClient;
