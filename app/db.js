@@ -1,4 +1,4 @@
-const { MongoClient, Db } = require('mongodb');
+const { Db, Collection, MongoClient } = require('mongodb');
 const config = require('./config');
 const schemas = require('./schema');
 const mongodb = require('mongodb').MongoClient;
@@ -8,13 +8,9 @@ const logger = require('turbo-logger').createStream({});
 /**
  * @returns {Db}
  */
-const init =  async() => {
-  const connectionString = `${config.mongo.connectionString}`;
+const dbInit =  async() => {
   try {
-    const client = await mongodb.connect(
-      connectionString,
-      { useNewUrlParser: true, useUnifiedTopology: true },
-    );
+    const client = await $getConnection();
     const connection = client.db();
     const collections = (await connection.collections()).map((v) => v.collectionName);
 
@@ -40,4 +36,29 @@ const init =  async() => {
   }
 }
 
-module.exports = init;
+/**
+ * 
+ * @returns {Promise<MongoClient>}
+ */
+const $getConnection = async () => {
+  const connectionString = `${config.mongo.connectionString}`;
+  return await mongodb.connect(
+    connectionString,
+    { useNewUrlParser: true, useUnifiedTopology: true },
+  );
+}
+
+/**
+ * Returns a collection of document
+ * @param {Collection<Document>} collectionName 
+ * @returns 
+ */
+const getDb = async(collectionName) => {
+  const connection = (await $getConnection()).db();
+  return connection.collection(collectionName);
+}
+
+module.exports = {
+  getDb,
+  dbInit
+};
