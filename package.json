@@ -13,6 +13,8 @@
   "dependencies": {
     "cross-env": "^7.0.3",
     "express": "^4.18.2",
+    "firebase": "^9.22.0",
+    "firebase-admin": "^11.8.0",
     "mongodb": "^5.5.0"
   },
   "devDependencies": {

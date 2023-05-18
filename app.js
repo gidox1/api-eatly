@@ -8,6 +8,7 @@ const logger = require('turbo-logger').createStream({});
 const dotenv = require('dotenv');
 const { dbInit } = require('./app/db');
 const routes = require('./app/routes');
+const FirebaseClient = require('./app/lib/firebase');
 
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
@@ -22,6 +23,7 @@ routes(app);
 
 try {
   app.listen(config.port, async() => {
+    await new FirebaseClient(config).initFirebaseAdmin();
     await dbInit();
     logger.log(`EatlyAPI started on port ${config.port} `);
   });
