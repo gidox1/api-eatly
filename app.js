@@ -1,14 +1,16 @@
 'use strict';
 
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import config from './app/config.js';
+import logger from './app/lib/logger.js';
+import * as dotenv from 'dotenv';
+import { dbInit } from './app/db.js';
+import routes from './app/routes/index.js';
+import FirebaseClient from './app/lib/firebase.js';
+
 const app = express();
-const bodyParser = require('body-parser');
-const config = require('./app/config');
-const logger = require('turbo-logger').createStream({});
-const dotenv = require('dotenv');
-const { dbInit } = require('./app/db');
-const routes = require('./app/routes');
-const FirebaseClient = require('./app/lib/firebase');
+
 
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
@@ -19,7 +21,6 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}));
 
 routes(app);
-
 
 try {
   app.listen(config.port, async() => {

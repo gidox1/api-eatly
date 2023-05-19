@@ -1,10 +1,11 @@
-const logger = require('turbo-logger');
-const config = require('../config');
-const { getDb } = require('../db');
-const UserController = require('./user/user.controller');
-const UserService = require('./user/user.service');
+import config from '../config.js';
+import { getDb } from '../db.js';
+import UserController from './user/user.controller.js';
+import UserService from './user/user.service.js';
+import FirebaseClient from '../lib/firebase.js';
+import logger from '../lib/logger.js';
 
-class ServiceFactory {
+export default class ServiceFactory {
   static config;
   static instance;
 
@@ -23,11 +24,28 @@ class ServiceFactory {
   }
 
   /**
+   * @returns {Promise<Collection<Restaurant>>}
+   */
+  static async getRestaurantRepository() {
+    return getDb(config.mongo.collections.restaurant.name);
+  }
+
+  /**
+   * @returns {FirebaseClient}
+   */
+  static async getFirebaseClient() {
+    return new FirebaseClient();
+  }
+
+  /**
    * @returns {UserService}
    */
   static async getUserService() {
     const userRepository = await ServiceFactory.getUserRepository();
-    return new UserService(logger, config, userRepository);
+    const firebaseClient = await ServiceFactory.getFirebaseClient();
+    const restaurantRepository = await ServiceFactory.getRestaurantRepository();
+
+    return new UserService(logger, config, userRepository, firebaseClient, restaurantRepository);
   }
 
   /**
@@ -38,5 +56,3 @@ class ServiceFactory {
     return new UserController(userService, logger);
   }
 }
-
-module.exports = ServiceFactory;

@@ -1,7 +1,7 @@
-const dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 dotenv.config();
 
-const config = {
+export default {
   port: process.env.PORT,
   mongo: {
     connectionString: process.env.MONGO_CONNECTION_STRING || 'mongodb://admin:password@localhost:27017/',
@@ -40,5 +40,3 @@ const config = {
   },
   appName: 'eatly'
 }
-
-module.exports = config;
