@@ -37,9 +37,35 @@ class UserController {
     this.logger.log('successfully created user: ', response);
     res.status(201).json({
       status: 'success',
-      data: toJSON(result).value,
+      data: response,
     })
   }
+
+    /**
+   * @param {Request} req
+   * @param {Response} res
+   */
+    async login(req, res) {
+      const { email, password } = req.body;
+      const result = await this.service.login({
+        email,
+        password,
+      });
+  
+      if(isErr(result)) {
+        return res.status(500).json({
+          error: true,
+          message: toJSON(result).error,
+        });
+      }
+  
+      const response = toJSON(result).value;
+      this.logger.log('successfully authenticated user: ', email);
+      res.status(201).json({
+        status: 'success',
+        data: response,
+      })
+    }
 }
 
 export default UserController;

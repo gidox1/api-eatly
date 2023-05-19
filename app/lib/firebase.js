@@ -1,7 +1,9 @@
 import logger from './logger.js';
 import firebase from 'firebase-admin';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth as adminAuth } from 'firebase-admin/auth';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+
 
 export default class FirebaseClient {
   constructor(config) {
@@ -25,7 +27,7 @@ export default class FirebaseClient {
 
   async createUser(data) {
     try {
-      const createdUser = await getAuth().createUser({
+      const createdUser = await adminAuth().createUser({
         email: data.email,
         password: data.password,
         displayName: data.displayName,
@@ -38,9 +40,14 @@ export default class FirebaseClient {
     }
   }
 
+  async login(data) {
+    const auth = await this.initFirebaseApp();
+    return signInWithEmailAndPassword(auth, data.email, data.password);
+  }
+
   async initFirebaseApp() {
     try {
-      const app = initializeApp(this.config.firebaseAppConfig);
+      const app = await initializeApp(this.config.firebaseAppConfig);
       return getAuth(app);
     } catch (error) {
       logger.error('Error occured during Firebase web initialization', error);

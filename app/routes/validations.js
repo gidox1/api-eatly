@@ -10,3 +10,8 @@ export const createUserValidation = joi.object({
   restaurantName: joi.string().optional(),
   role: joi.string().valid('user', 'merchant').required(),
 });
+
+export const loginUserValidation = joi.object({
+  email: joi.string().email({ minDomainSegments: 2, tlds: { allow: false } }).required(),
+  password: joi.string().required(),
+});
