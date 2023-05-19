@@ -34,7 +34,7 @@ export default class ServiceFactory {
    * @returns {FirebaseClient}
    */
   static async getFirebaseClient() {
-    return new FirebaseClient();
+    return new FirebaseClient(config);
   }
 
   /**

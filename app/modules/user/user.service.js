@@ -70,4 +70,41 @@ export default class UserService {
       return TrueMyth.Result.err('An error occured while creating user');
     }
   }
+
+    /**
+   * @param {Object} data 
+   * @returns {TrueMyth.Result<any, string>}
+   */
+    async login(data) {
+      const metrics = {};
+      metrics.email = data.email;
+
+      try {
+        const user = await this.repository.findOne({
+          email: data.email
+        });
+    
+        if(user === null) {
+          this.logger.error('user does not exist', metrics);
+          return TrueMyth.Result.err('user does not exist');
+        }
+        
+        // login user on firebase
+        const authResponse = await this.firebaseClient.login({
+          email: data.email,
+          password: data.password,
+        });
+
+        return TrueMyth.Result.ok({ 
+          userId: user._id, 
+          token: authResponse.user.stsTokenManager.accessToken 
+        });
+      } catch(error) {
+        this.logger.error('User login error: ', error, metrics);
+        if(error.code === 'auth/wrong-password') {
+          return TrueMyth.Result.err('Invalid auth credentials');
+        }
+        return TrueMyth.Result.err('An error occured while authenticating user');
+      }
+    }
 }

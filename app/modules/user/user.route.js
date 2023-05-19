@@ -1,5 +1,5 @@
 import requestValidator from '../../lib/requestValidatior.js';
-import { createUserValidation } from '../../routes/validations.js';
+import { createUserValidation, loginUserValidation } from '../../routes/validations.js';
 import ServiceFactory from '../factory.js';
 
 export default async (app) => {
@@ -12,4 +12,11 @@ export default async (app) => {
   app.post(`/${routePrefix}`, 
   (req, res, next) => requestValidator(req.body, createUserValidation, res, next),
   (req, res) => userController.create(req, res));
+
+  /**
+   * login user
+   */
+  app.post(`/${routePrefix}/login`, 
+  (req, res, next) => requestValidator(req.body, loginUserValidation, res, next),
+  (req, res) => userController.login(req, res));
 }
