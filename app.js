@@ -20,6 +20,13 @@ if (LocalEnv) {
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.get('/', (req, res, next) => {
+  return res.send({
+    status: 'Eatly service is up and running',
+    code: 200
+  });
+})
+
 routes(app);
 
 try {
