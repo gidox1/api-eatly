@@ -38,5 +38,11 @@ export default {
     appId: process.env.FIREBASE_APP_ID,
     measurementId: process.env.FIREBASE_APP_MEASUREMENT_ID,
   },
-  appName: 'eatly'
+  appName: 'eatly',
+  pagination: {
+    page: process.env.PAGE || 1,
+    pageSize: process.env.PAGE_SIZE || 20,
+    orderDirection: process.env.ORDER_DIRECTION || -1,
+    orderBy: process.env.ORDER_BY || 'createdAt',
+  }
 }
