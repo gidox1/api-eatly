@@ -1,6 +1,6 @@
 const UserSchema = {
   id: 'user',
-  required: [ "name", "email" ],
+  required: [ "name", "email", "role", "createdAt", "updatedAt" ],
   properties: {
     name: {
       bsonType: "string",
@@ -27,12 +27,20 @@ const UserSchema = {
       bsonType: "string",
       description: "The phone number of the user"
     },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
   }
 }
 
 const RestaurantSchema = {
   id: 'restaurant',
-  required: [ "name", "merchantId" ],
+  required: [ "name", "merchantId", "createdAt", "updatedAt" ],
   properties: {
     name: {
       bsonType: "string",
@@ -42,12 +50,20 @@ const RestaurantSchema = {
       bsonType: "objectId",
       description: "The ID of the merchant" 
     },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
   }
 }
 
 const BranchSchema = {
   id: 'branch',
-  required: [ "name", "merchantId", "restaurantId", "status"],
+  required: [ "name", "merchantId", "restaurantId", "status", "createdAt", "updatedAt"],
   properties: {
     name: {
       bsonType: "string",
@@ -72,6 +88,14 @@ const BranchSchema = {
     address: {
       bsonType: "string",
       description: "The address of the restaurant branch"
+    },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
     }
   }
 }

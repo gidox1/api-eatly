@@ -40,7 +40,11 @@ export default class UserService {
       }
 
       const payload = buildUserData(data);
-      const insertOperation = await this.repository.insertOne(payload);
+      const insertOperation = await this.repository.insertOne({
+        ...payload,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
       const user = await this.repository.findOne({_id: insertOperation.insertedId});
 
       // create user on firebase
@@ -53,10 +57,22 @@ export default class UserService {
 
       if(data.role === roles.merchant) {
         // create restaurant if user is a merchant
-        await this.restaurantRepository.insertOne({
-          name: data.restaurantName,
-          merchantId: user._id,
-        });
+        const existingRestaurant = await this.restaurantRepository.findOne({ name: data.restaurantName });
+        if(existingRestaurant === null) {
+          await this.restaurantRepository.insertOne({
+            name: data.restaurantName,
+            merchantId: user._id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        } else {
+          await this.repository.deleteOne({ email: data.email });
+          this.logger.error('restaurant already exist', {
+            name: data.restaurantName,
+            merchant: data.email,
+          });
+          return TrueMyth.Result.err('restaurant already exist');
+        }
       }
 
       return TrueMyth.Result.ok({
