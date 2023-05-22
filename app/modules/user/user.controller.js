@@ -38,7 +38,7 @@ class UserController {
     res.status(201).json({
       status: 'success',
       data: response,
-    })
+    });
   }
 
     /**

@@ -72,8 +72,22 @@ export default class BranchController {
    * @param {Request} req 
    * @param {Response} res 
    */
-    getById(req, res) {
-      console.log('branch controller');
-      return;
+   async getById(req, res) {
+      const { branchId } = req.params;
+      const result = await this.service.getById(branchId);
+
+      if(isErr(result)) {
+        return res.status(500).json({
+          error: true,
+          message: toJSON(result).error,
+        });
+      }
+
+      const response = toJSON(result).value;
+      this.logger.log('successfully fetched branches');
+      res.status(201).json({
+        status: 'success',
+        data: response,
+      });
     }
 }

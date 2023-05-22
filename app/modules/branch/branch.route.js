@@ -1,6 +1,6 @@
 import { authValidation } from '../../lib/auth.js';
 import requestValidator from '../../lib/requestValidatior.js';
-import { createBranchValidation, listbranchesValidation } from '../../routes/validations.js';
+import { createBranchValidation, listbranchesValidation, getBranchValidation } from '../../routes/validations.js';
 import ServiceFactory from '../factory.js';
 
 export default async (app) => {
@@ -22,4 +22,12 @@ export default async (app) => {
   (req, res, next) => authValidation(req, res, next),
   (req, res, next) => requestValidator(req.body, listbranchesValidation, res, next),
   (req, res) => controller.list(req, res));
+
+  /**
+   * Get branch
+   */
+  app.get(`/${routePrefix}/:branchId`, 
+  (req, res, next) => authValidation(req, res, next),
+  (req, res, next) => requestValidator(req.params, getBranchValidation, res, next),
+  (req, res) => controller.getById(req, res));
 }

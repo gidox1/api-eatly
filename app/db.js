@@ -24,6 +24,17 @@ export const dbInit =  async() => {
             },
           }
         });
+      } else {
+        await connection.command({ 
+          collMod: schema.id,
+          validator: {
+            $jsonSchema: {
+              bsonType: "object",
+              required: schema.required,
+              properties: schema.properties,
+            },
+          },
+        });
       }
     }
 

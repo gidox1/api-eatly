@@ -8,6 +8,7 @@ import * as dotenv from 'dotenv';
 import { dbInit } from './app/db.js';
 import routes from './app/routes/index.js';
 import FirebaseClient from './app/lib/firebase.js';
+import fileupload from "express-fileupload";
 
 const app = express();
 
@@ -19,6 +20,15 @@ if (LocalEnv) {
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(fileupload({
+  createParentPath: true,
+  tempFileDir: '/tmp/',
+    limits: {
+      fileSize: 500000 //500kb
+  },
+  abortOnLimit: true,
+  useTempFiles: true,
+}));
 
 app.get('/', (req, res, next) => {
   return res.send({

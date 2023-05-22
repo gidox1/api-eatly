@@ -1,6 +1,7 @@
 import { Collection, ObjectId } from "mongodb";
 import * as TrueMyth from 'true-myth';
 import { Statuses } from "../../constants.js";
+import { Branch } from "../../commands/branch.command.js";
 
 export default class BranchService {
   /**
@@ -97,4 +98,27 @@ export default class BranchService {
       return TrueMyth.Result.err('An error occured while listing restaurants');
     }
   }
+
+   /**
+   * @param {String} id 
+   * @returns {TrueMyth.Result<WithId<Branch>, any>} 
+   */
+    async getById(id) {
+      if(!id) {
+        return TrueMyth.Result.err(`branchId is required`);
+      }
+      const metrics ={};
+      metrics.id = id;
+      try {
+        const branch = await this.repository.findOne({_id: new ObjectId(id)});
+        if(branch === null) {
+          this.logger.error('branch does not exist: ', metrics);
+          return TrueMyth.Result.err(`branch with id ${id.toString()} does not exist`);
+        }
+        return TrueMyth.Result.ok(branch);
+      } catch(error) {
+        this.logger.error('Branch fetch error: ', error);
+        return TrueMyth.Result.err('An error occured while getting branch by Id');
+      }
+    }
 }

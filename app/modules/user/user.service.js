@@ -25,6 +25,11 @@ export default class UserService {
    * @returns {TrueMyth.Result<any, string>}
    */
   async create(data) {
+    const metrics = {...data};
+    metrics.userExists = 'false';
+    let restaurantId = undefined;
+    metrics.restaurantId = restaurantId;
+
     if(data.restaurantName === undefined && data.role === roles.merchant) {
       return TrueMyth.Result.err('Restaurant name is required for user with merchant role');
     }
@@ -35,6 +40,7 @@ export default class UserService {
       });
   
       if(existingUser) {
+        metrics.userExists = 'true';
         this.logger.error('user already exist');
         return TrueMyth.Result.err('user already exist');
       }
@@ -59,13 +65,16 @@ export default class UserService {
         // create restaurant if user is a merchant
         const existingRestaurant = await this.restaurantRepository.findOne({ name: data.restaurantName });
         if(existingRestaurant === null) {
-          await this.restaurantRepository.insertOne({
+          const insertOps = await this.restaurantRepository.insertOne({
             name: data.restaurantName,
             merchantId: user._id,
             createdAt: new Date(),
             updatedAt: new Date(),
           });
+          restaurantId = insertOps.insertedId.toHexString();
+          metrics.restaurantId = restaurantId;
         } else {
+          await this.firebaseClient.deleteUser(data.email);
           await this.repository.deleteOne({ email: data.email });
           this.logger.error('restaurant already exist', {
             name: data.restaurantName,
@@ -80,6 +89,7 @@ export default class UserService {
         email: user.email,
         token: undefined,
         id: user._id.toHexString(),
+        restaurantId: restaurantId,
       });
     } catch(error) {
       this.logger.error('User creation error: ', error);

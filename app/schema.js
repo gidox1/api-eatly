@@ -100,8 +100,52 @@ const BranchSchema = {
   }
 }
 
+const ProductSchema = {
+  id: 'product',
+  required: [ "name", "description", "branchId", "cost", "status", "url", "imagePublicId", "createdAt", "updatedAt"],
+  properties: {
+    name: {
+      bsonType: "string",
+      description: "The name of the product"
+    },
+    description: {
+      bsonType: "string",
+      description: "The description of the product" 
+    },
+    branchId: {
+      bsonType: "objectId",
+      description: "The ID of the branch" 
+    },
+    status: {
+      enum: [ "active", "inactive" ],
+      description: "Must be either active or inactive"
+    },
+    cost: {
+      bsonType: "double",
+      description: "The cost of the product"
+    },
+    url: {
+      bsonType: "string",
+      description: "The imageUrl of the product" 
+    },
+    imagePublicId: {
+      bsonType: "string",
+      description: "The image publicId of the product" 
+    },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
+  }
+}
+
 export default [
   UserSchema,
   BranchSchema,
-  RestaurantSchema
+  RestaurantSchema,
+  ProductSchema
 ]

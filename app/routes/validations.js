@@ -35,9 +35,20 @@ export const getRestaurantValidation = joi.object({
   restaurantId: joi.string().required(),
 });
 
+export const getBranchValidation = joi.object({
+  branchId: joi.string().required(),
+});
+
 export const createBranchValidation = joi.object({
   restaurantId: joi.string().min(24).required(),
   name: joi.string().required(),
   city: joi.string().required(),
   address: joi.string().required(),
+});
+
+export const createProductValidation = joi.object({
+  description: joi.string().required(),
+  name: joi.string().required(),
+  branchId: joi.string().min(24).required(),
+  cost: joi.number().required(),
 });

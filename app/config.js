@@ -15,6 +15,9 @@ export default {
       branch: {
         name: 'branch'
       },
+      product: {
+        name: 'product'
+      },
     }
   },
   firebaseAdminConfig: {
@@ -44,5 +47,10 @@ export default {
     pageSize: process.env.PAGE_SIZE || 20,
     orderDirection: process.env.ORDER_DIRECTION || -1,
     orderBy: process.env.ORDER_BY || 'createdAt',
-  }
+  },
+  cloudinary: {
+    cloudinaryName: process.env.CLOUDINARY_NAME,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
 }

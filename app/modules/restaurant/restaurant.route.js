@@ -19,6 +19,7 @@ export default async (app) => {
    * Get restaurant
    */
   app.get(`/${routePrefix}/:restaurantId`, 
+  (req, res, next) => authValidation(req, res, next),
   (req, res, next) => requestValidator(req.params, getRestaurantValidation, res, next),
   (req, res) => controller.getById(req, res));
 }

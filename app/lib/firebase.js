@@ -40,6 +40,19 @@ export default class FirebaseClient {
     }
   }
 
+  async deleteUser (email) {
+    try {
+      const user = await this.initFirebaseAdmin().auth().getUserByEmail(email);
+      if (user) {
+        await firebase.app().auth().deleteUser(user.uid);
+        logger.log('user deleted sucessfully');
+      }
+    } catch (error) {
+      logger.error('Failed to delete user from firebase', error);
+      throw error;
+    }
+  };
+
   async login(data) {
     const auth = await this.initFirebaseApp();
     return signInWithEmailAndPassword(auth, data.email, data.password);

@@ -8,6 +8,10 @@ import RestaurantService from './restaurant/restaurant.service.js';
 import BranchService from './branch/branch.service.js';
 import RestaurantController from './restaurant/restaurant.controller.js';
 import BranchController from './branch/branch.controller.js';
+import { Product } from '../commands/product.command.js';
+import { ProductController } from './product/product.controller.js';
+import { ProductService } from './product/product.service.js';
+import { Cloudinary } from '../lib/cloudinary.js';
 
 export default class ServiceFactory {
   static config;
@@ -42,10 +46,24 @@ export default class ServiceFactory {
   }
 
   /**
+   * @returns {Promise<Collection<Product>>}
+   */
+  static async getProductRepository() {
+    return getDb(config.mongo.collections.product.name);
+  }
+
+  /**
    * @returns {FirebaseClient}
    */
   static async getFirebaseClient() {
     return new FirebaseClient(config);
+  }
+
+  /**
+   * @returns {Cloudinary}
+   */
+  static async getCloudinaryClient() {
+    return new Cloudinary(config, logger);
   }
 
   /**
@@ -78,6 +96,17 @@ export default class ServiceFactory {
   }
 
   /**
+   * @returns {ProductService}
+   */
+  static async getProductService() {
+    const repository = await ServiceFactory.getProductRepository();
+    const branchService = await ServiceFactory.getBranchService();
+    const restaurantService = await ServiceFactory.getRestaurantService();
+    const cloudinaryClient = await ServiceFactory.getCloudinaryClient();
+    return new ProductService(logger, config, repository, branchService, restaurantService, cloudinaryClient);
+  }
+
+  /**
    * @returns {UserController}
    */
   static async getUserController() {
@@ -99,5 +128,13 @@ export default class ServiceFactory {
   static async getBranchController() {
     const branchService = await ServiceFactory.getBranchService();
     return new BranchController(branchService, logger);
+  }
+
+  /**
+   * @returns {ProductController}
+   */
+  static async getProductController() {
+    const service = await ServiceFactory.getProductService();
+    return new ProductController(service, logger);
   }
 }
