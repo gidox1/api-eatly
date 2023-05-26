@@ -18,6 +18,9 @@ export default {
       product: {
         name: 'product'
       },
+      order: {
+        name: 'order'
+      }
     }
   },
   firebaseAdminConfig: {

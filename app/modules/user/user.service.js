@@ -1,7 +1,8 @@
-import { Collection } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 import * as TrueMyth from 'true-myth';
 import FirebaseClient from '../../lib/firebase.js'
-import { buildUserData, roles } from './user.helper.js';
+import { buildUserData, roles, userResponseMapper } from './user.helper.js';
+import { UserMapper } from '../../commands/user.command.js';
 
 export default class UserService {
 
@@ -133,4 +134,27 @@ export default class UserService {
         return TrueMyth.Result.err('An error occured while authenticating user');
       }
     }
+
+  /**
+   * @param {String} id 
+   * @returns {TrueMyth.Result<WithId<UserMapper>, any>} 
+   */
+  async getById(id) {
+    if(!id) {
+      return TrueMyth.Result.err(`userId is required`);
+    }
+    const metrics ={};
+    metrics.id = id;
+    try {
+      const user = await this.repository.findOne({_id: new ObjectId(id)});
+      if(user === null) {
+        this.logger.error('user does not exist: ', metrics);
+        return TrueMyth.Result.err(`user with id ${id.toString()} does not exist`);
+      }
+      return TrueMyth.Result.ok(userResponseMapper(user));
+    } catch(error) {
+      this.logger.error('User fetch error: ', error);
+      return TrueMyth.Result.err('An error occured while getting user by Id');
+    }
+  }
 }

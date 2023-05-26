@@ -11,7 +11,7 @@ export const dbInit =  async() => {
   try {
     const client = await $getConnection();
     const connection = client.db();
-    const collections = (await connection.collections()).map((v) => v.collectionName);
+    const collections = (await connection.collections())?.map((v) => v.collectionName);
 
     for(let schema of schemas) {
       if (collections && !collections.includes(schema.id)) {

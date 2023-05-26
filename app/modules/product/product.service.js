@@ -33,7 +33,7 @@ export class ProductService {
       try {
         // Check if product exists
         const existingProduct = await this.repository.findOne({ name: data.name, branch: new ObjectId(data.branchId) });
-        if(existingProduct === null) {
+        if(existingProduct) {
           this.logger.error('Product already exists', metrics);
           return TrueMyth.Result.err('Product already exists');
         }
@@ -76,6 +76,7 @@ export class ProductService {
           merchantId: data.merchantId,
           restaurantId: restaurant._id,
           id: insertOps.insertedId.toHexString(),
+          url: imageUrl,
         });
       }
       catch (error) {
@@ -88,8 +89,31 @@ export class ProductService {
       }
     }
   
-    async list(req, res){
+    async list(data){
+      const searchFilters = {};
+      const query = {
+        page: data.page ?? this.config.pagination.page,
+        pageSize: data.pageSize ?? this.config.pagination.pageSize,
+        orderBy: this.config.pagination.orderBy,
+        orderDirection: this.config.pagination.orderDirection,
+      };
       
+      if(data.productIds) {
+        const ids = data.productIds.map((id) => new ObjectId(id));
+        searchFilters._id = { $in: ids };
+      }
+
+      try {
+        const products = await this.repository.find(searchFilters, {
+          sort: { [query.orderBy]: query.orderDirection },
+          skip: (query.page - 1) * query.pageSize,
+          limit: query.pageSize,
+        }).toArray();
+        return TrueMyth.Result.ok(products);
+      } catch(error) {
+        this.logger.error('Restaurant list error: ', error);
+        return TrueMyth.Result.err('An error occured while listing restaurants');
+      }
     }
   
 

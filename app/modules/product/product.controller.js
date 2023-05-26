@@ -31,7 +31,7 @@ export class ProductController {
       name,
       description,
       branchId,
-      cost: +cost,
+      cost: Number(cost),
       merchantId: userId,
       productImage: req.files,
     });

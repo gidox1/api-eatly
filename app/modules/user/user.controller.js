@@ -66,6 +66,29 @@ class UserController {
         data: response,
       })
     }
+
+  /**
+   * @param {Request} req 
+   * @param {Response} res 
+   */
+   async getById(req, res) {
+    const { id } = req.params;
+    const result = await this.service.getById(id);
+
+    if(isErr(result)) {
+      return res.status(500).json({
+        error: true,
+        message: toJSON(result).error,
+      });
+    }
+
+    const response = toJSON(result).value;
+    this.logger.log('successfully fetched users');
+    res.status(201).json({
+      status: 'success',
+      data: response,
+    });
+  }
 }
 
 export default UserController;

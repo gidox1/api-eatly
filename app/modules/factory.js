@@ -12,6 +12,8 @@ import { Product } from '../commands/product.command.js';
 import { ProductController } from './product/product.controller.js';
 import { ProductService } from './product/product.service.js';
 import { Cloudinary } from '../lib/cloudinary.js';
+import OrderService from './order/order.service.js';
+import OrderController from './order/order.controller.js';
 
 export default class ServiceFactory {
   static config;
@@ -36,6 +38,13 @@ export default class ServiceFactory {
    */
   static async getRestaurantRepository() {
     return getDb(config.mongo.collections.restaurant.name);
+  }
+
+  /**
+   * @returns {Promise<Collection<Restaurant>>}
+   */
+  static async getOrderRepository() {
+    return getDb(config.mongo.collections.order.name);
   }
 
   /**
@@ -96,6 +105,16 @@ export default class ServiceFactory {
   }
 
   /**
+   * @returns {OrderService}
+   */
+  static async getOrderService() {
+    const userService = await ServiceFactory.getUserService();
+    const orderRepository = await ServiceFactory.getOrderRepository();
+    const productService = await ServiceFactory.getProductService();
+    return new OrderService(logger, config, orderRepository, userService, productService);
+  }
+
+  /**
    * @returns {ProductService}
    */
   static async getProductService() {
@@ -112,6 +131,14 @@ export default class ServiceFactory {
   static async getUserController() {
     const userService = await ServiceFactory.getUserService();
     return new UserController(userService, logger);
+  }
+
+  /**
+   * @returns {OrderController}
+   */
+  static async getOrderController() {
+    const service = await ServiceFactory.getOrderService();
+    return new OrderController(service, logger);
   }
 
   /**

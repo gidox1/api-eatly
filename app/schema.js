@@ -143,9 +143,82 @@ const ProductSchema = {
   }
 }
 
+const OrderSchema = {
+  id: 'order',
+  required: [ "products", "userId", "status", "totalCost", "address", "createdAt", "updatedAt"],
+  properties: {
+    products: {
+      bsonType: "array",
+      description: "The IDs of the product",
+      items: {
+        bsonType: "object",
+        required:["id", "qty", "sumTotal"],
+        properties: {
+          id: {
+            bsonType: "objectId",
+            description: "The ID of the product" 
+          },
+          qty: {
+            bsonType: "int",
+            description: "The quantities of the product",
+          },
+          sumTotal: {
+            bsonType: "double",
+            description: "The sum of all items cost for this product",
+          }
+        }
+      }
+    },
+    userId: {
+      bsonType: "objectId",
+      description: "The ID of the user" 
+    },
+    totalCost: {
+      bsonType: "double",
+      description: "The total cost of the order"
+    },
+    status: {
+      enum: [ "pending", "active", "cancelled" ],
+      description: "Must be either active, pending or cancelled"
+    },
+    address: {
+      bsonType: "object",
+      description: "The address of the order",
+      required:["street", "city", "state", "zipCode"],
+      properties: {
+        street: {
+          bsonType: "string",
+          description: "The street where the order is delivered to", 
+        },
+        city: {
+          bsonType: "string",
+          description: "The city where the order is delivered to", 
+        },
+        state: {
+          bsonType: "string",
+          description: "The state where the order is delivered to", 
+        },
+        zipCode: {
+          bsonType: "string",
+          description: "The zipCode where the order is delivered to", 
+        }
+      }
+    },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
+  }
+}
+
 export default [
   UserSchema,
   BranchSchema,
   RestaurantSchema,
-  ProductSchema
-]
+  ProductSchema,
+  OrderSchema,
+];
