@@ -9,15 +9,15 @@ import { dbInit } from './app/db.js';
 import routes from './app/routes/index.js';
 import FirebaseClient from './app/lib/firebase.js';
 import fileupload from "express-fileupload";
-
-const app = express();
-
+import cors from 'cors';
 
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
   dotenv.config({ path: '.env' });
 }
 
+const app = express();
+app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(fileupload({
@@ -37,6 +37,7 @@ app.get('/', (req, res, next) => {
   });
 })
 
+// load routes
 routes(app);
 
 try {
