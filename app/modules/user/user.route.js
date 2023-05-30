@@ -1,5 +1,5 @@
 import requestValidator from '../../lib/requestValidatior.js';
-import { byId, createUserValidation, loginUserValidation } from '../../routes/validations.js';
+import { byId, createUserValidation, loginUserValidation, updateUserValidation } from '../../routes/validations.js';
 import ServiceFactory from '../factory.js';
 import { authValidation } from '../../lib/auth.js';
 
@@ -28,4 +28,13 @@ export default async (app) => {
     (req, res, next) => authValidation(req, res, next),
     (req, res, next) => requestValidator(req.params, byId, res, next),
     (req, res) => userController.getById(req, res));
+
+
+  /**
+   * login user
+   */
+  app.patch(`/${routePrefix}`, 
+  (req, res, next) => authValidation(req, res, next),
+  (req, res, next) => requestValidator(req.body, updateUserValidation, res, next),
+  (req, res) => userController.update(req, res));
 }

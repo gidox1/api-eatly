@@ -27,6 +27,10 @@ const UserSchema = {
       bsonType: "string",
       description: "The phone number of the user"
     },
+    city: {
+      bsonType: "string",
+      description: "The city of the user"
+    },
     createdAt: {
       bsonType: "date",
       description: "The date the record was created"
@@ -115,6 +119,10 @@ const ProductSchema = {
     branchId: {
       bsonType: "objectId",
       description: "The ID of the branch" 
+    },
+    restaurantName: {
+      bsonType: "string",
+      description: "The name of the restaurant" 
     },
     status: {
       enum: [ "active", "inactive" ],

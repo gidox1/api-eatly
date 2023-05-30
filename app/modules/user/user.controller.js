@@ -89,6 +89,28 @@ class UserController {
       data: response,
     });
   }
+
+  /**
+   * @param {Request} req
+   * @param {Response} res
+   */
+    async update(req, res) {
+      const { userId } = req.user;
+      const result = await this.service.update(req.body, userId);
+      if(isErr(result)) {
+        return res.status(500).json({
+          error: true,
+          message: toJSON(result).error,
+        });
+      }
+  
+      const response = toJSON(result).value;
+      this.logger.log('successfully updated user: ', response);
+      res.status(201).json({
+        status: 'success',
+        data: response,
+      });
+    }
 }
 
 export default UserController;

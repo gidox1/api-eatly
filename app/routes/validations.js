@@ -11,6 +11,11 @@ export const createUserValidation = joi.object({
   role: joi.string().valid('user', 'merchant').required(),
 });
 
+export const updateUserValidation = joi.object({
+  phoneNumber: joi.string().min(6).optional(),
+  city: joi.string().min(6).optional(),
+});
+
 export const loginUserValidation = joi.object({
   email: joi.string().email({ minDomainSegments: 2, tlds: { allow: false } }).required(),
   password: joi.string().required(),
@@ -56,6 +61,15 @@ export const createProductValidation = joi.object({
   branchId: joi.string().min(24).required(),
   cost: joi.number().required(),
 });
+
+export const listproductsValidation = joi.object({
+  pageSize: joi.number().optional(),
+  orderBy: joi.string().optional(),
+  orderDirection: joi.number().optional(),
+  page: joi.number().optional(),
+  productIds: joi.array().optional(),
+});
+
 
 const product = joi.object({
   id: joi.string().required(),

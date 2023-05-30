@@ -157,4 +157,30 @@ export default class UserService {
       return TrueMyth.Result.err('An error occured while getting user by Id');
     }
   }
+
+
+  /**
+   * @param {Object} data 
+   * @returns {TrueMyth.Result<WithId<UserMapper>, any>} 
+   */
+  async update(data, userId) {
+    const metrics ={data};
+    try {
+      const user = await this.repository.findOne({_id: new ObjectId(userId)});
+      if(user === null) {
+        this.logger.error('user does not exist: ', metrics);
+        return TrueMyth.Result.err(`user with id ${id.toString()} does not exist`);
+      }
+      await this.repository.updateOne({_id: new ObjectId(userId) }, { 
+        $set: { 
+          ...data,
+        }
+      });
+      const updated = await this.repository.findOne({_id: new ObjectId(userId)});
+      return TrueMyth.Result.ok(userResponseMapper(updated));
+    } catch(error) {
+      this.logger.error('User fetch error: ', error);
+      return TrueMyth.Result.err('An error occured while getting user by Id');
+    }
+  }
 }
