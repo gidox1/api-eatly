@@ -22,7 +22,8 @@ export default class RestaurantController {
       page: +req.body.page,
       pageSize: +req.body.pageSize,
       orderBy: req.body.orderBy,
-      orderDirection: +req.body.orderDirection
+      orderDirection: +req.body.orderDirection,
+      branchIds: req.body.branchIds ?? undefined,
     }
     const result = await this.service.list(listFilters);
 
@@ -48,6 +49,30 @@ export default class RestaurantController {
     async getById(req, res) {
       const { restaurantId } = req.params;
       const result = await this.service.getById(restaurantId);
+
+      if(isErr(result)) {
+        return res.status(500).json({
+          error: true,
+          message: toJSON(result).error,
+        });
+      }
+
+      const response = toJSON(result).value;
+      this.logger.log('successfully fetched resturants');
+      res.status(201).json({
+        status: 'success',
+        data: response,
+      });
+    }
+
+
+  /**
+   * @param {Request} req 
+   * @param {Response} res 
+   */
+    async topRestaurants(req, res) {
+      const { restaurantId } = req.params;
+      const result = await this.service.topRestaurants(restaurantId);
 
       if(isErr(result)) {
         return res.status(500).json({

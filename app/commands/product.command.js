@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 
 export class Product {
+  _id = new ObjectId();
   name = new String();
   description = new String();
   branchId = new ObjectId();

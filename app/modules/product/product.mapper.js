@@ -6,11 +6,12 @@ import { Statuses } from "../../constants.js"
  * @param {Product} data 
  * @returns 
  */
-export const productMapper = (data, branchId, imageUrl, publicId) => {
+export const productMapper = (data, branchId, restaurantName, imageUrl, publicId) => {
   return {
     name: data.name,
     description: data.description,
     branchId: branchId,
+    restaurantName,
     status: Statuses.active,
     cost: data.cost,
     url: imageUrl,
@@ -18,4 +19,13 @@ export const productMapper = (data, branchId, imageUrl, publicId) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   }
+}
+
+/**
+ * 
+ * @param {Product[]} productData 
+ */
+export const listProductMapper = (productData) => {
+  const productIds = productData.map((v) => v._id);
+  
 }

@@ -56,10 +56,27 @@ export class ProductController {
    * @param {Response} res 
    */
   async list(req, res){
-    console.log('product service')
-    res.send({
-      status: 'true'
-    })
+    const listFilters = {
+      page: +req.body.page,
+      pageSize: +req.body.pageSize,
+      orderBy: req.body.orderBy,
+      orderDirection: +req.body.orderDirection,
+      restaurantIds: req.body.restaurantIds ?? null,
+    };
+
+    const result = await this.service.list(listFilters);
+    if(isErr(result)) {
+      return res.status(500).json({
+        error: true,
+        message: toJSON(result).error,
+      });
+    }
+
+    const response = toJSON(result).value;
+    res.status(201).json({
+      status: 'success',
+      data: response,
+    });
   }
 
   /**

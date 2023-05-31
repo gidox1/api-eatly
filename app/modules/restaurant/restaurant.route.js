@@ -16,10 +16,19 @@ export default async (app) => {
   (req, res) => controller.list(req, res));
 
   /**
+   * Top restaurants
+   */
+  app.get(`/${routePrefix}/top`, 
+  (req, res, next) => authValidation(req, res, next),
+  (req, res, next) => requestValidator(req.body, listRestaurantValidation, res, next),
+  (req, res) => controller.topRestaurants(req, res));
+
+  /**
    * Get restaurant
    */
   app.get(`/${routePrefix}/:restaurantId`, 
   (req, res, next) => authValidation(req, res, next),
   (req, res, next) => requestValidator(req.params, getRestaurantValidation, res, next),
   (req, res) => controller.getById(req, res));
+
 }

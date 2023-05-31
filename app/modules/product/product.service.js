@@ -52,7 +52,7 @@ export class ProductService {
           this.logger.error('Restaurant fetch error: ', restaurantResult.error);
           return TrueMyth.Result.err('Restaurant not found');
         }
-        const restaurant = toJSON(branchResult).value;
+        const restaurant = toJSON(restaurantResult).value;
   
         // Validate merchant data
         if(restaurant.merchantId.toHexString() !== data.merchantId) {
@@ -66,7 +66,7 @@ export class ProductService {
         const imageUrl = cloudinaryResponse.url;
         const imagePublicId = cloudinaryResponse.public_id;
         metrics.publicId = imagePublicId;
-        const createProductData = productMapper(data, branch._id, imageUrl, imagePublicId);
+        const createProductData = productMapper(data, branch._id, restaurant.name, imageUrl, imagePublicId);
 
         // Create product
         const insertOps = await this.repository.insertOne(createProductData);
