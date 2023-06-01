@@ -1,6 +1,7 @@
 import {Client, Environment, ApiError} from 'square';
+import config from '../config.js';
 
 export default new Client({
-  accessToken: process.env.SQUARE_ACCESS_TOKEN,
+  accessToken: config.square.accessToken,
   environment: Environment.Sandbox,
 });

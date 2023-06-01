@@ -10,7 +10,6 @@ import routes from './app/routes/index.js';
 import FirebaseClient from './app/lib/firebase.js';
 import fileupload from "express-fileupload";
 import cors from 'cors';
-import client from './app/lib/square.js';
 
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {

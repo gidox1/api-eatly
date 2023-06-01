@@ -20,6 +20,9 @@ export default {
       },
       order: {
         name: 'order'
+      },
+      payment: {
+        name: 'payment'
       }
     }
   },
@@ -56,4 +59,8 @@ export default {
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
   },
+  square: {
+    locationId: process.env.SQUARE_LOCATION_ID,
+    accessToken: process.env.SQUARE_ACCESS_TOKEN,
+  }
 }

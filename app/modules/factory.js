@@ -14,6 +14,8 @@ import { ProductService } from './product/product.service.js';
 import { Cloudinary } from '../lib/cloudinary.js';
 import OrderService from './order/order.service.js';
 import OrderController from './order/order.controller.js';
+import PaymentController from './payment/payment.controller.js';
+import PaymentService from './payment/payment.service.js';
 
 export default class ServiceFactory {
   static config;
@@ -59,6 +61,13 @@ export default class ServiceFactory {
    */
   static async getProductRepository() {
     return getDb(config.mongo.collections.product.name);
+  }
+
+  /**
+   * @returns {Promise<Collection<Product>>}
+   */
+  static async getPaymentRepository() {
+    return getDb(config.mongo.collections.payment.name);
   }
 
   /**
@@ -108,10 +117,10 @@ export default class ServiceFactory {
    * @returns {OrderService}
    */
   static async getOrderService() {
-    const userService = await ServiceFactory.getUserService();
+    const paymentService = await ServiceFactory.getPaymentService();
     const orderRepository = await ServiceFactory.getOrderRepository();
     const productService = await ServiceFactory.getProductService();
-    return new OrderService(logger, config, orderRepository, userService, productService);
+    return new OrderService(logger, config, orderRepository, paymentService, productService);
   }
 
   /**
@@ -123,6 +132,15 @@ export default class ServiceFactory {
     const restaurantService = await ServiceFactory.getRestaurantService();
     const cloudinaryClient = await ServiceFactory.getCloudinaryClient();
     return new ProductService(logger, config, repository, branchService, restaurantService, cloudinaryClient);
+  }
+
+  /**
+   * @returns {ProductService}
+   */
+  static async getPaymentService() {
+    const repository = await ServiceFactory.getPaymentRepository();
+    const orderRepository = await ServiceFactory.getOrderRepository();
+    return new PaymentService(logger, config, repository, orderRepository);
   }
 
   /**
@@ -164,4 +182,12 @@ export default class ServiceFactory {
     const service = await ServiceFactory.getProductService();
     return new ProductController(service, logger);
   }
+
+    /**
+   * @returns {PaymentController}
+   */
+    static async getPaymentController() {
+      const service = await ServiceFactory.getPaymentService();
+      return new PaymentController(service, logger);
+    }
 }

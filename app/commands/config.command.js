@@ -15,6 +15,9 @@ export class Config {
       product: {
         name: new String(),
       },
+      payment: {
+        name: new String(),
+      },
     }
   };
   firebaseAdminConfig = {
@@ -50,4 +53,8 @@ export class Config {
     cloudinaryApiKey:new String(),
     cloudinaryApiSecret: new String(),
   };
+  square = {
+    locationId: new String(),
+    accessToken: new String(),
+  }
 }

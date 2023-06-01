@@ -181,6 +181,10 @@ const OrderSchema = {
       bsonType: "objectId",
       description: "The ID of the user" 
     },
+    unitCost: {
+      bsonType: "double",
+      description: "The unit cost of the order"
+    },
     totalCost: {
       bsonType: "double",
       description: "The total cost of the order"
@@ -212,6 +216,53 @@ const OrderSchema = {
         }
       }
     },
+    paymentId: {
+      bsonType: "objectId",
+      description: "The paymentId of the order" 
+    },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
+  }
+}
+
+const PaymentSchema = {
+  id: 'payment',
+  required: [ "source", "sourceId", "cost", "status", "createdAt", "updatedAt"],
+  properties: {
+    source: {
+      enum: [ "order", "shipping" ],
+      description: "The source of the payment"
+    },
+    sourceId: {
+      bsonType: "objectId",
+      description: "The ID of the source" 
+    },
+    cost: {
+      bsonType: "double",
+      description: "The cost of the product"
+    },
+    status: {
+      enum: [ "new", "failed", "success" ],
+      description: "The status of the payment"
+    },
+    externalPaymentId: {
+      bsonType: "string",
+      description: "The payment ID from payment provider" 
+    },
+    orderId: {
+      bsonType: "string",
+      description: "The payment provider payment order id" 
+    },
+    receiptUrl: {
+      bsonType: "string",
+      description: "The payment receipt url from the payment provider" 
+    },
     createdAt: {
       bsonType: "date",
       description: "The date the record was created"
@@ -229,4 +280,5 @@ export default [
   RestaurantSchema,
   ProductSchema,
   OrderSchema,
+  PaymentSchema,
 ];

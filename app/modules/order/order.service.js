@@ -6,22 +6,25 @@ import { ProductService } from "../product/product.service.js";
 import { CreateOrder } from "../../commands/order.command.js";
 import OrderHelper from "./order.helper.js";
 import * as TrueMyth from 'true-myth';
+import PaymentService from "../payment/payment.service.js";
+import { isErr, toJSON } from "true-myth/result";
+import { PaymentStatuses } from "../../commands/payment.command.js";
 
 export default class OrderService {
   /**
    * @param {Logger} logger 
    * @param {Config} config 
    * @param {Collection<Document>} repository 
-   * @param {UserService} userService 
+   * @param {PaymentService} paymentService 
    * @param {ProductService} productService 
    */
-  constructor(logger, config, repository, userService, productService) {
+  constructor(logger, config, repository, paymentService, productService) {
     this.config = config;
     this.repository = repository;
     this.logger = logger;
-    this.userService = userService;
+    this.paymentService = paymentService;
     this.productService = productService; 
-    this.helper = new OrderHelper(userService, productService, logger, config);
+    this.helper = new OrderHelper(paymentService, productService, logger, config);
   }
 
   /**
@@ -29,10 +32,11 @@ export default class OrderService {
    * @param {CreateOrder} data 
    */
   async create(data) {
+    data.totalCost = +data.totalCost;
     const metrics = {};
     metrics.productsLength = data.products.length;
     metrics.userId = data.userId;
-
+    
     const ids = data.products.map((v) => v.id);
     try {
       const products = await this.helper.validateProducts({
@@ -49,13 +53,34 @@ export default class OrderService {
       });
 
       const insertOps = await this.repository.insertOne(orderPayload);
-      metrics.orderId = insertOps.insertedId.toHexString();
+      const orderId = insertOps.insertedId.toHexString();
+      metrics.orderId = orderId;
+      let paymentResponse = await this.paymentService.create(data, orderId);
+      paymentResponse = toJSON(paymentResponse).value;
 
-      this.logger.log('Successfully created order :', metrics);
-      return TrueMyth.Result.ok({
-        id: insertOps.insertedId.toHexString(),
-        userId: data.userId,
+      const paymentId = paymentResponse.id;
+      metrics.paymentId = paymentId;
+
+      const payment = await this.paymentService.pay({
+        ...data.payment,
+        amount: data.totalCost,
       });
+      metrics.externalPaymentId = payment.paymentId;
+
+      await this.paymentService.updatePayment({
+        orderId: payment.orderId,
+        externalPaymentId: payment.id,
+        status: PaymentStatuses.success,
+        receiptUrl: payment.receiptUrl,
+      }, paymentId);
+
+      this.logger.log('successfully created order and payment', metrics);
+      return TrueMyth.Result.ok({
+        id: orderId,
+        paymentId,
+        externalPaymentId: payment.id,
+      });
+
     } catch(error) {
       this.logger.error('Create Order Error', error, { metrics });
       return TrueMyth.Result.err('An error occured while creating order');
@@ -69,11 +94,27 @@ export default class OrderService {
     });
   }
 
-  async getById(id) {
-    console.log('controller');
-    res.send({
-      message: 'order!',
-    });
+   /**
+   * @param {String} id 
+   * @returns {TrueMyth.Result<WithId<Order>, any>} 
+   */
+   async getById(id) {
+    if(!id) {
+      return TrueMyth.Result.err(`orderId is required`);
+    }
+    const metrics ={};
+    metrics.id = id;
+    try {
+      const order = await this.repository.findOne({_id: new ObjectId(id)});
+      if(order === null) {
+        this.logger.error('order does not exist: ', metrics);
+        return TrueMyth.Result.err(`order with id ${id.toString()} does not exist`);
+      }
+      return TrueMyth.Result.ok(order);
+    } catch(error) {
+      this.logger.error('Order fetch error: ', error);
+      return TrueMyth.Result.err('An error occured while getting order by Id');
+    }
   }
 
   async update(id) {

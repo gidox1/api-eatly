@@ -74,6 +74,7 @@ export const listproductsValidation = joi.object({
 const product = joi.object({
   id: joi.string().required(),
   qty: joi.number().required(),
+  unitCost: joi.number().required(),
   sumTotal: joi.number().required(),
 })
 
@@ -85,5 +86,17 @@ export const createOrderValidation = joi.object({
     city: joi.string().required(),
     state: joi.string().required(),
     zipCode: joi.string().required(),
-  })
-})
+  }),
+  payment: joi.object({
+    sourceId: joi.string(),
+    idempotencyKey: joi.string(),
+  }),
+});
+
+export const listPaymentValidation = joi.object({
+  pageSize: joi.number().optional(),
+  orderBy: joi.string().optional(),
+  orderDirection: joi.number().optional(),
+  page: joi.number().optional(),
+  paymentIds: joi.array().optional(),
+});

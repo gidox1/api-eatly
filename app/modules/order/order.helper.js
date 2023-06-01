@@ -4,18 +4,18 @@ import { Logger } from "../../commands/logger.command.js";
 import { CreateOrder } from "../../commands/order.command.js";
 import { OrderStatuses } from "../../constants.js";
 import { ProductService } from "../product/product.service.js";
-import UserService from "../user/user.service.js";
 import { isErr, toJSON } from "true-myth/result";
+import PaymentService from "../payment/payment.service.js";
 
 export default class OrderHelper {
   /**
-   * @param {UserService} userService 
+   * @param {PaymentService} userService 
    * @param {ProductService} productService 
    * @param {Logger} logger 
    * @param {Config} config 
    */
-  constructor(userService, productService, logger, config) {
-    this.userService = userService;
+  constructor(paymentService, productService, logger, config) {
+    this.paymentService = paymentService;
     this.productService = productService;
     this.logger = logger;
     this.config = config;
@@ -37,10 +37,9 @@ export default class OrderHelper {
    * @param {CreateOrder} data 
    */
   mapOrderData(data) {
-    const totalCost = this.$computeCost(data.products);
     return {
-      ...data,
-      totalCost,
+      totalCost: data.totalCost,
+      address: data.address,
       createdAt: new Date(),
       updatedAt: new Date(),
       status: OrderStatuses.active,
@@ -48,7 +47,9 @@ export default class OrderHelper {
       products: data.products.map((v) => {
         return {
           ...v,
+          unitCost: +v.unitCost,
           id: new ObjectId(v.id),
+          sumTotal: (v.qty * +v.unitCost),
         }
       })
     };

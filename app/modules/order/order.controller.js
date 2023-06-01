@@ -17,7 +17,7 @@ export default class OrderController {
    * @param {Response} res 
    */
   async create(req, res) {
-    const { products, totalCost, address } = req.body;
+    const { products, totalCost, address, payment } = req.body;
     const { userId } = req.user; 
 
     const result = await this.service.create({
@@ -25,6 +25,7 @@ export default class OrderController {
       totalCost,
       address,
       userId,
+      payment,
     });
 
     if(isErr(result)) {

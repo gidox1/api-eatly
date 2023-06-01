@@ -14,4 +14,8 @@ export class CreateOrder {
     zipCode: new String(),
   }
   userId = new String();
+  payment = {
+    sourceId: new String(),
+    idempotencyKey: new String(),
+  }
 }
