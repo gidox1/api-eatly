@@ -106,6 +106,11 @@ export class ProductService {
         searchFilters._id = { $in: ids };
       }
 
+      if(data.restaurantIds) {
+        const ids = data.restaurantIds.map((id) => new ObjectId(id));
+        searchFilters.restaurantId = { $in: ids };
+      }
+
       try {
         const products = await this.repository.find(searchFilters, {
           sort: { [query.orderBy]: query.orderDirection },

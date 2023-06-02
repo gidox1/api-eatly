@@ -68,6 +68,7 @@ export const listproductsValidation = joi.object({
   orderDirection: joi.number().optional(),
   page: joi.number().optional(),
   productIds: joi.array().optional(),
+  restaurantIds: joi.array().optional(),
 });
 
 
