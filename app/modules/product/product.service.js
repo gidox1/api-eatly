@@ -37,22 +37,25 @@ export class ProductService {
           this.logger.error('Product already exists', metrics);
           return TrueMyth.Result.err('Product already exists');
         }
-
-        // Validate branch data
-        const branchResult = await this.branchService.getById(data.branchId);
-        if(isErr(branchResult)){
-          this.logger.error('Branch fetch error: ', branchResult.error);
-          return TrueMyth.Result.err('Branch not found');
-        }
-        const branch = toJSON(branchResult).value;
   
         // Validate restaurant data
-        const restaurantResult = await this.restaurantService.getById(branch.restaurantId.toHexString());
+        const restaurantResult = await this.restaurantService.getById(data.restaurantId);
         if(isErr(restaurantResult)){
           this.logger.error('Restaurant fetch error: ', restaurantResult.error);
           return TrueMyth.Result.err('Restaurant not found');
         }
         const restaurant = toJSON(restaurantResult).value;
+
+        // Validate branch data
+        const branchResult = await this.branchService.list({
+          restaurantIds: [restaurant._id.toHexString()]
+        });
+
+        if(isErr(branchResult)){
+          this.logger.error('Branch fetch error: ', branchResult.error);
+          return TrueMyth.Result.err('Branch not found');
+        }
+        const branch = toJSON(branchResult).value;
   
         // Validate merchant data
         if(restaurant.merchantId.toHexString() !== data.merchantId) {
@@ -66,7 +69,7 @@ export class ProductService {
         const imageUrl = cloudinaryResponse.url;
         const imagePublicId = cloudinaryResponse.public_id;
         metrics.publicId = imagePublicId;
-        const createProductData = productMapper(data, branch._id, restaurant.name, imageUrl, imagePublicId);
+        const createProductData = productMapper(data, branch._id, restaurant, imageUrl, imagePublicId);
 
         // Create product
         const insertOps = await this.repository.insertOne(createProductData);

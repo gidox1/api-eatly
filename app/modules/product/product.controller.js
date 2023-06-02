@@ -17,7 +17,7 @@ export class ProductController {
    * @param {Response} res 
    */
   async create(req, res){
-    const { name, description, branchId, cost } = req.body;
+    const { name, description, restaurantId, cost } = req.body;
     const { userId } = req.user;
 
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -30,7 +30,7 @@ export class ProductController {
     const result = await this.service.create({
       name,
       description,
-      branchId,
+      restaurantId,
       cost: Number(cost),
       merchantId: userId,
       productImage: req.files,

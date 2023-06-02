@@ -106,7 +106,7 @@ const BranchSchema = {
 
 const ProductSchema = {
   id: 'product',
-  required: [ "name", "description", "branchId", "cost", "status", "url", "imagePublicId", "createdAt", "updatedAt"],
+  required: [ "name", "description", "restaurantId", "cost", "status", "url", "imagePublicId", "createdAt", "updatedAt"],
   properties: {
     name: {
       bsonType: "string",
@@ -119,6 +119,10 @@ const ProductSchema = {
     branchId: {
       bsonType: "objectId",
       description: "The ID of the branch" 
+    },
+    restaurantId: {
+      bsonType: "objectId",
+      description: "The ID of the restaurant" 
     },
     restaurantName: {
       bsonType: "string",

@@ -6,12 +6,12 @@ import { Statuses } from "../../constants.js"
  * @param {Product} data 
  * @returns 
  */
-export const productMapper = (data, branchId, restaurantName, imageUrl, publicId) => {
-  return {
+export const productMapper = (data, branchId, restaurant, imageUrl, publicId) => {
+  const resp = {
     name: data.name,
     description: data.description,
-    branchId: branchId,
-    restaurantName,
+    restaurantName: restaurant.name,
+    restaurantId: restaurant._id,
     status: Statuses.active,
     cost: data.cost,
     url: imageUrl,
@@ -19,6 +19,15 @@ export const productMapper = (data, branchId, restaurantName, imageUrl, publicId
     createdAt: new Date(),
     updatedAt: new Date(),
   }
+
+  if(branchId) {
+    return {
+      ...resp,
+      branchId,
+    }
+  }
+
+  return resp;
 }
 
 /**
