@@ -23,7 +23,10 @@ export default {
       },
       payment: {
         name: 'payment'
-      }
+      },
+      webhookEvents: {
+        name: 'webhookEvents'
+      },
     }
   },
   firebaseAdminConfig: {

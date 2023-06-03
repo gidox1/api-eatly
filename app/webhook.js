@@ -1,5 +1,18 @@
 import { Config } from "./commands/config.command.js";
 import crypto from 'crypto';
+import { getDb } from "./db.js";
+import { Collection } from "mongodb";
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+  /**
+   * @param {Config} config
+   * @returns {Promise<Collection<Document>}
+   */
+  const getWebhookEventsRepository = async (config) => {
+    return getDb(config.mongo.collections.webhookEvents.name);
+  }
+
 
 /**
  * @param {Request} req 
@@ -9,15 +22,31 @@ import crypto from 'crypto';
  */
 export const webhook = async (req, res, config) => {
   const event = req.body;
-  console.log('Received event:', event, "\n\n\n");
+  const metrics = {};
+  metrics.eventType = event.type;
+  metrics.eventId = event.event_id;
 
   const webhookSecret = config.square.webHookSecret;
-  let hmac = crypto.createHmac('sha1', webhookSecret);
-  // const data = Buffer.from(event).toString('base64')
-  hmac.update(JSON.stringify(event));
-  const hash = hmac.digest('base64');
-  console.log(hash !== req.headers['x-square-signature'], "hash !== event.headers['x-square-signature']")
-  // console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
+
+  // dedupe
+  const repository = await getWebhookEventsRepository(config);
+  const eventData = await repository.findOne({
+    id: event.event_id,
+  });
+
+  // if(eventData !== null) {
+  //   console.log('Duplicate event detected:', eventId);
+  //   return res.status(200).end();
+  // }
+
+  console.log(eventData, "eventDataeventData");
+  const signature = req.headers['x-square-signature'];
+  const isValidSignature = verifySignature(req.rawBody, signature, webhookSecret);
+  if (!isValidSignature) {
+    console.error('\n\nInvalid webhook signature\n\n');
+    res.status(200).end();
+  }
+
   res.status(200).end();
 
 

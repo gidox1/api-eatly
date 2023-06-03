@@ -18,6 +18,9 @@ export class Config {
       payment: {
         name: new String(),
       },
+      webhookEvents: {
+        name: new String(),
+      }
     }
   };
   firebaseAdminConfig = {

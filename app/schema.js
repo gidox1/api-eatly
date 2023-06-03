@@ -290,6 +290,29 @@ const PaymentSchema = {
   }
 }
 
+const WebhookEvents = {
+  id: 'webhookEvents',
+  required: [ "type", "id", "createdAt", "updatedAt" ],
+  properties: {
+    type: {
+      bsonType: "string",
+      description: "The type of event"
+    },
+    id: {
+      bsonType: "string",
+      description: "The id of the event"
+    },
+    createdAt: {
+      bsonType: "date",
+      description: "The date the record was created"
+    },
+    updatedAt: {
+      bsonType: "date",
+      description: "The date the record was updated"
+    }
+  }
+}
+
 export default [
   UserSchema,
   BranchSchema,
@@ -297,4 +320,5 @@ export default [
   ProductSchema,
   OrderSchema,
   PaymentSchema,
+  WebhookEvents,
 ];
