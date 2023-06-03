@@ -31,6 +31,7 @@ app.use(fileupload({
   useTempFiles: true,
 }));
 
+
 app.get('/', (req, res, next) => {
   return res.send({
     status: 'Eatly service is up and running',
@@ -38,7 +39,9 @@ app.get('/', (req, res, next) => {
   });
 })
 
-app.post('/webhook', (req, res, next) => webhook(req, res, config));
+app.post('/webhook', (req, res, next) => {
+  webhook(req, res, config)
+});
 
 // load routes
 routes(app);

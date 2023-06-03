@@ -10,15 +10,19 @@ import crypto from 'crypto';
 export const webhook = async (req, res, config) => {
   const event = req.body;
   const webhookSecret = config.square.webHookSecret;
-  console.log('Received event:', event, webhookSecret);
+  console.log('Received event:', event, "\n\n\n");
+  console.log(req, "REQUEST\n\n\n")
+  console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
+  res.status(200).end();
+
 
   // Verify the webhook event signature
-  const signature = req.headers['x-square-signature'];
-  const isValidSignature = verifySignature(req.rawBody, signature, webhookSecret);
-  if (!isValidSignature) {
-    console.error('Invalid webhook signature');
-    return res.status(400).end();
-  }
+  // const signature = req.headers['x-square-signature'];
+  // const isValidSignature = verifySignature(JSON.stringify(req.body), signature, webhookSecret);
+  // if (!isValidSignature) {
+  //   console.error('Invalid webhook signature');
+  //   return res.status(400).end();
+  // }
 
   // Process the webhook event
   // Add your custom logic here to handle the event
