@@ -1,4 +1,4 @@
-import { Config } from "./commands/config.command";
+import { Config } from "./commands/config.command.js";
 import crypto from 'crypto';
 
 /**
