@@ -16,7 +16,7 @@ export const webhook = async (req, res, config) => {
   // const data = Buffer.from(event).toString('base64')
   hmac.update(JSON.stringify(event));
   const hash = hmac.digest('base64');
-  console.log(hash !== event.headers['x-square-signature'], "hash !== event.headers['x-square-signature']")
+  console.log(hash !== req.headers['x-square-signature'], "hash !== event.headers['x-square-signature']")
   // console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
   res.status(200).end();
 
