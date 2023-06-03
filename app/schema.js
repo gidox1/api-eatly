@@ -164,7 +164,7 @@ const OrderSchema = {
       description: "The IDs of the product",
       items: {
         bsonType: "object",
-        required:["id", "qty", "sumTotal"],
+        required:["id", "qty", "sumTotal", "name", "restaurantName", "url"],
         properties: {
           id: {
             bsonType: "objectId",
@@ -177,7 +177,19 @@ const OrderSchema = {
           sumTotal: {
             bsonType: "double",
             description: "The sum of all items cost for this product",
-          }
+          },
+          name: {
+            bsonType: "string",
+            description: "The name of the product" 
+          },
+          restaurantName: {
+            bsonType: "string",
+            description: "The name of the restaurant" 
+          },
+          url: {
+            bsonType: "string",
+            description: "The image url of the product" 
+          },
         }
       }
     },

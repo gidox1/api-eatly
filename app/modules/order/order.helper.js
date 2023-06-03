@@ -50,6 +50,9 @@ export default class OrderHelper {
           unitCost: +v.unitCost,
           id: new ObjectId(v.id),
           sumTotal: (v.qty * +v.unitCost),
+          name: v.name,
+          restaurantName: v.restaurantName,
+          url: v.url,
         }
       })
     };

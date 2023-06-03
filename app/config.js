@@ -62,5 +62,6 @@ export default {
   square: {
     locationId: process.env.SQUARE_LOCATION_ID,
     accessToken: process.env.SQUARE_ACCESS_TOKEN,
+    webHookSecret: process.env.WEBHOOK_SECRET,
   }
 }

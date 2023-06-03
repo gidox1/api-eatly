@@ -1,4 +1,4 @@
-import { Collection } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import { Config } from "../../commands/config.command.js";
 import { Logger } from "../../commands/logger.command.js";
 import UserService from "../user/user.service.js";
@@ -87,11 +87,30 @@ export default class OrderService {
     }
   }
 
-  async list(options) {
-    console.log('controller');
-    res.send({
-      message: 'order!',
-    });
+  async list(data) {
+    const searchFilters = {};
+    const query = {
+      page: data.page ?? this.config.pagination.page,
+      pageSize: data.pageSize ?? this.config.pagination.pageSize,
+      orderBy: this.config.pagination.orderBy,
+      orderDirection: this.config.pagination.orderDirection,
+    };
+    
+    if(data.userId) {
+      searchFilters.userId = new ObjectId(data.userId);
+    }
+
+    try {
+      const orders = await this.repository.find(searchFilters, {
+        sort: { [query.orderBy]: query.orderDirection },
+        skip: (query.page - 1) * query.pageSize,
+        limit: query.pageSize,
+      }).toArray();
+      return TrueMyth.Result.ok(orders);
+    } catch(error) {
+      this.logger.error('Order list error: ', error);
+      return TrueMyth.Result.err('An error occured while listing orders');
+    }
   }
 
    /**

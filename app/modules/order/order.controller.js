@@ -47,9 +47,30 @@ export default class OrderController {
    * @param {Response} res 
    */
   async list(req, res) {
-    console.log('controller');
-    res.send({
-      message: 'order!',
+    const listFilters = {
+      page: +req.body.page,
+      pageSize: +req.body.pageSize,
+      orderBy: req.body.orderBy,
+      orderDirection: +req.body.orderDirection,
+    };
+    const { userId } = req.user;
+
+    const result = await this.service.list({
+      ...listFilters,
+      userId,
+    });
+
+    if(isErr(result)) {
+      return res.status(500).json({
+        error: true,
+        message: toJSON(result).error,
+      });
+    }
+
+    const response = toJSON(result).value;
+    res.status(201).json({
+      status: 'success',
+      data: response,
     });
   }
 

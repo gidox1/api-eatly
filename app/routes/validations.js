@@ -77,7 +77,10 @@ const product = joi.object({
   qty: joi.number().required(),
   unitCost: joi.number().required(),
   sumTotal: joi.number().required(),
-})
+  name: joi.string().required(),
+  restaurantName: joi.string().required(),
+  url: joi.string().required(),
+});
 
 export const createOrderValidation = joi.object({
   products: joi.array().items(product),
@@ -100,4 +103,11 @@ export const listPaymentValidation = joi.object({
   orderDirection: joi.number().optional(),
   page: joi.number().optional(),
   paymentIds: joi.array().optional(),
+});
+
+export const listOrderValidation = joi.object({
+  pageSize: joi.number().optional(),
+  orderBy: joi.string().optional(),
+  orderDirection: joi.number().optional(),
+  page: joi.number().optional(),
 });

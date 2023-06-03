@@ -56,5 +56,6 @@ export class Config {
   square = {
     locationId: new String(),
     accessToken: new String(),
+    webHookSecret: new String(),
   }
 }

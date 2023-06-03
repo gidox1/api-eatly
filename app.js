@@ -10,6 +10,7 @@ import routes from './app/routes/index.js';
 import FirebaseClient from './app/lib/firebase.js';
 import fileupload from "express-fileupload";
 import cors from 'cors';
+import { webhook } from './app/webhook.js';
 
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
@@ -36,6 +37,8 @@ app.get('/', (req, res, next) => {
     code: 200
   });
 })
+
+app.post('/webhook', (req, res, next) => webhook(req, res, config));
 
 // load routes
 routes(app);
