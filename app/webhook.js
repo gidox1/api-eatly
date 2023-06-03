@@ -9,10 +9,14 @@ import crypto from 'crypto';
  */
 export const webhook = async (req, res, config) => {
   const event = req.body;
-  const webhookSecret = config.square.webHookSecret;
   console.log('Received event:', event, "\n\n\n");
-  console.log(req, "REQUEST\n\n\n")
-  console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
+
+  const webhookSecret = config.square.webHookSecret;
+  let hmac = crypto.createHmac('sha1', webhookSecret);
+  hmac.update(event);
+  const hash = hmac.digest('base64');
+  console.log(hash !== event.headers['x-square-signature'], "hash !== event.headers['x-square-signature']")
+  // console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
   res.status(200).end();
 
 
