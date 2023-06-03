@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import { getDb } from "./db.js";
 import { Collection } from "mongodb";
 import * as dotenv from 'dotenv';
+import { WebhooksHelper } from "square";
+
 dotenv.config();
 
   /**
@@ -39,14 +41,17 @@ export const webhook = async (req, res, config) => {
   //   return res.status(200).end();
   // }
 
-  console.log(eventData, "eventDataeventData");
-  const signature = req.headers['x-square-signature'];
-  const isValidSignature = verifySignature(req.rawBody, signature, webhookSecret);
+
+  const signature = req.headers['x-square-hmacsha256-signature'];
+  const url = '	https://eatly-api.onrender.com/webhook';
+
+  const isValidSignature = verifySignature(url, req.body.toString(), signature, webhookSecret);
   if (!isValidSignature) {
     console.error('\n\nInvalid webhook signature\n\n');
-    res.status(200).end();
+    return res.status(200).end();
   }
-
+  
+  console.log("All good!")
   res.status(200).end();
 
 
@@ -65,10 +70,12 @@ export const webhook = async (req, res, config) => {
 }
 
 // Helper function to verify the webhook signature
-function verifySignature(payload, signature, secret) {
-  const expectedSignature = crypto
-    .createHmac('sha1', secret)
-    .update(payload)
-    .digest('hex');
-  return signature === expectedSignature;
+function verifySignature(requestUrl, payload, signature, secret) {
+  console.log(requestUrl, payload, signature, secret, "requestUrl, payload, signature, secret")
+  return WebhooksHelper.isValidWebhookEventSignature(
+    payload,
+    signature,
+    secret,
+    requestUrl
+  );
 }
