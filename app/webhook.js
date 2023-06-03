@@ -13,8 +13,8 @@ export const webhook = async (req, res, config) => {
 
   const webhookSecret = config.square.webHookSecret;
   let hmac = crypto.createHmac('sha1', webhookSecret);
-  const data = Buffer.from(event).toString('base64')
-  hmac.update(data);
+  // const data = Buffer.from(event).toString('base64')
+  hmac.update(JSON.stringify(event));
   const hash = hmac.digest('base64');
   console.log(hash !== event.headers['x-square-signature'], "hash !== event.headers['x-square-signature']")
   // console.log(req.requestContext.domainName + req.requestContext.path, "VALUES\n\n\n")
