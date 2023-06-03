@@ -50,7 +50,7 @@ function requestHandler(request, response) {
     } else {
       console.log("INVALID SIGNATURE")
       // Signature is invalid. Return 403 Forbidden.
-      response.writeHead(403);
+      response.writeHead(200);
     }
     response.end();
   });
