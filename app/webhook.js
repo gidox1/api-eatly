@@ -8,7 +8,9 @@ import crypto from 'crypto';
  * @param {Config} config
  */
 export const webhook = async (req, res, config) => {
+  const event = req.body;
   const webhookSecret = config.square.webHookSecret;
+  console.log('Received event:', event, webhookSecret);
 
   // Verify the webhook event signature
   const signature = req.headers['x-square-signature'];
@@ -19,9 +21,7 @@ export const webhook = async (req, res, config) => {
   }
 
   // Process the webhook event
-  const event = req.body;
   // Add your custom logic here to handle the event
-  console.log('Received event:', event);
 
   res.status(200).end();
 }
