@@ -39,9 +39,7 @@ app.get('/', (req, res, next) => {
   });
 })
 
-app.post('/webhook', (req, res, next) => {
-  webhook(req, res, config)
-});
+app.post('/webhook', (req, res, next) => webhook(req, res, config));
 
 // load routes
 routes(app);
