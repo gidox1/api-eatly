@@ -20,8 +20,10 @@ if (LocalEnv) {
 const app = express();
 
 app.use(cors())
-app.use(bodyParser.json());
 
+app.post('/webhook', (req, res, next) => webhook(req, res, config));
+
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -44,7 +46,6 @@ app.get('/', (req, res, next) => {
   });
 })
 
-app.post('/webhook', (req, res, next) => webhook(req, res, config));
 
 // load routes
 routes(app);
