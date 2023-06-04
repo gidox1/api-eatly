@@ -116,7 +116,8 @@ export default class UserService {
         await this.firebaseClient.deleteUser(data.email);
         await this.repository.deleteOne({ email: data.email });
       }
-      this.logger.error('User creation error: ', error);
+      console.log(error, "errorerrorerror")
+      this.logger.error('User creation error: ', JSON.stringify(error));
       return TrueMyth.Result.err('An error occured while creating user');
     }
   }
