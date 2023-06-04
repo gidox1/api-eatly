@@ -61,4 +61,11 @@ export class Config {
     accessToken: new String(),
     webHookSecret: new String(),
   }
+  rabbit = {
+    url: new String(),
+    queue: {
+      userCreation: new String(),
+      userUpdated: new String(),
+    }
+  }
 }

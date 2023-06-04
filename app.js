@@ -12,6 +12,8 @@ import fileupload from "express-fileupload";
 import cors from 'cors';
 import { webhook } from './app/webhook.js';
 import handleConsumerCreatedConsumer from './app/lib/mq/consumers/createCustomer.js';
+import handleCustomerUpdated from './app/lib/mq/consumers/updateCustomer.js';
+
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
   dotenv.config({ path: '.env' });
@@ -57,6 +59,7 @@ try {
 
     // start consumers
     await handleConsumerCreatedConsumer.start();
+    await handleCustomerUpdated.start();
     logger.log(`EatlyAPI started on port ${config.port} `);
   });
 } catch(error) {

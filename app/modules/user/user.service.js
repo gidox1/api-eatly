@@ -6,12 +6,13 @@ import { UserMapper } from '../../commands/user.command.js';
 import { publisher } from '../../lib/mq/publisher.js';
 import { getConnectionChannel } from '../../lib/mq/index.js';
 import crypto from 'crypto';
+import { Config } from '../../commands/config.command.js';
 
 export default class UserService {
 
   /**
    * @param {logger} logger 
-   * @param {*} config 
+   * @param {Config} config 
    * @param {Collection} repository 
    * @param {FirebaseClient} firebaseClient 
    * @param {Collection} restaurantRepository
@@ -202,6 +203,18 @@ export default class UserService {
         }
       });
       const updated = await this.repository.findOne({_id: new ObjectId(userId)});
+      // publish user created message
+      // this can run synchronously
+      const channel = await getConnectionChannel();
+      publisher(this.config.rabbit.queue.userUpdated, {
+        test: true,
+        message: JSON.stringify({
+          userId: user._id.toHexString(),
+          idempotencyKey: crypto.randomUUID(),
+          phoneNumber: user.phoneNumber,
+          customerId: updated.paymentProviderCustomerId,
+        })
+      }, channel);
       return TrueMyth.Result.ok(userResponseMapper(updated));
     } catch(error) {
       this.logger.error('User fetch error: ', error);

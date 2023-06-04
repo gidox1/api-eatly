@@ -1,5 +1,4 @@
 import { Config } from "./commands/config.command.js";
-import crypto from 'crypto';
 import { getDb } from "./db.js";
 import { Collection } from "mongodb";
 import * as dotenv from 'dotenv';
@@ -12,7 +11,6 @@ dotenv.config();
 
 // The URL where event notifications are sent.
 const NOTIFICATION_URL = 'https://eatly-api.onrender.com/webhook';
-
 // The signature key defined for the subscription.
 const SIGNATURE_KEY = process.env.WEBHOOK_SECRET;
 
@@ -103,6 +101,9 @@ const HandleEvents = async (event, config) => {
         updatedAt: new Date(),
       });
       logger.log('successfully handled customer created event', metrics);
+      break;
+    case 'customer.updated':
+      logger.log('Successfully receievd customer updated webhook request!')
       break;
     default:
       console.log('default event!');

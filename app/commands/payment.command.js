@@ -27,7 +27,6 @@ export class PaymentModel {
   status = new PaymentStatuses();
   externalPaymentId = new String();
 }
-
 export class PaymentProviderResponse {
   paymentId = new String();
   amount = new Object();

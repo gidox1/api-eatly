@@ -70,7 +70,8 @@ export default {
   rabbit: {
     url: process.env.RABBIT_URL,
     queue: {
-      userCreation: 'userCreation'
-    }
-  }
+      userCreation: 'userCreation',
+      userUpdated: 'userUpdated',
+    },
+  },
 }
