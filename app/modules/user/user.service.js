@@ -5,6 +5,7 @@ import { buildUserData, roles, userResponseMapper } from './user.helper.js';
 import { UserMapper } from '../../commands/user.command.js';
 import { publisher } from '../../lib/mq/publisher.js';
 import { getConnectionChannel } from '../../lib/mq/index.js';
+import crypto from 'crypto';
 
 export default class UserService {
 
