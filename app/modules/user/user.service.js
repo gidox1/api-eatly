@@ -3,6 +3,8 @@ import * as TrueMyth from 'true-myth';
 import FirebaseClient from '../../lib/firebase.js'
 import { buildUserData, roles, userResponseMapper } from './user.helper.js';
 import { UserMapper } from '../../commands/user.command.js';
+import { publisher } from '../../lib/mq/publisher.js';
+import { getConnectionChannel } from '../../lib/mq/index.js';
 
 export default class UserService {
 
@@ -53,6 +55,7 @@ export default class UserService {
         updatedAt: new Date(),
       });
       const user = await this.repository.findOne({_id: insertOperation.insertedId});
+      metrics.userId = user._id.toHexString();
 
       // create user on firebase
       await this.firebaseClient.createUser({
@@ -61,6 +64,7 @@ export default class UserService {
         displayName: data.name,
         id: user._id.toHexString(),
       });
+      metrics.firebaseUserCreated = true;
 
       if(data.role === roles.merchant) {
         // create restaurant if user is a merchant
@@ -85,6 +89,21 @@ export default class UserService {
         }
       }
 
+      // publish user created message
+      // this can run synchronously
+      const channel = await getConnectionChannel();
+      publisher(this.config.rabbit.queue.userCreation, {
+        test: true,
+        message: JSON.stringify({
+          userId: user._id.toHexString(),
+          idempotencyKey: crypto.randomUUID(),
+          givenName: user.name.split(" ")[0],
+          familyName: user.name.split(" ")[1],
+          emailAddress: user.email,
+          phoneNumber: user.phoneNumber,
+        })
+      }, channel);
+
       return TrueMyth.Result.ok({
         name: user.name,
         email: user.email,
@@ -93,6 +112,10 @@ export default class UserService {
         restaurantId: restaurantId,
       });
     } catch(error) {
+      if(metrics.userId && metrics.firebaseUserCreated) {
+        await this.firebaseClient.deleteUser(data.email);
+        await this.repository.deleteOne({ email: data.email });
+      }
       this.logger.error('User creation error: ', error);
       return TrueMyth.Result.err('An error occured while creating user');
     }

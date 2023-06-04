@@ -31,6 +31,10 @@ const UserSchema = {
       bsonType: "string",
       description: "The city of the user"
     },
+    paymentProviderCustomerId: {
+      bsonType: "string",
+      description: "The user's customerId on the payment provider"
+    },
     createdAt: {
       bsonType: "date",
       description: "The date the record was created"

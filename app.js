@@ -11,7 +11,7 @@ import FirebaseClient from './app/lib/firebase.js';
 import fileupload from "express-fileupload";
 import cors from 'cors';
 import { webhook } from './app/webhook.js';
-
+import handleConsumerCreatedConsumer from './app/lib/mq/consumers/createCustomer.js';
 const LocalEnv = process.env.NODE_ENV === 'dev';
 if (LocalEnv) {
   dotenv.config({ path: '.env' });
@@ -53,6 +53,9 @@ try {
   app.listen(config.port, async() => {
     await new FirebaseClient(config).initFirebaseAdmin();
     await dbInit();
+
+    // start consumers
+    await handleConsumerCreatedConsumer.start();
     logger.log(`EatlyAPI started on port ${config.port} `);
   });
 } catch(error) {

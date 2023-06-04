@@ -66,5 +66,11 @@ export default {
     locationId: process.env.SQUARE_LOCATION_ID,
     accessToken: process.env.SQUARE_ACCESS_TOKEN,
     webHookSecret: process.env.WEBHOOK_SECRET,
+  },
+  rabbit: {
+    url: process.env.RABBIT_URL,
+    queue: {
+      userCreation: 'userCreation'
+    }
   }
 }
