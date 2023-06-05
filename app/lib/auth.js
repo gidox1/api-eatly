@@ -15,16 +15,29 @@ export const getAuthToken = (req) => {
  * @param {Response} res 
  * @param {import("express").NextFunction} next 
  */
-export async function authValidation (req, res, next) {
+export async function authValidation (req, res, next, persist = true) {
   const token = getAuthToken(req);
+
+  if(!token) {
+    return res.status(401).send({
+      error: true,
+      message: 'User not authorized to make this request',
+    });
+  }
+
   try {
     const decoded = await getAuth().verifyIdToken(token);
     const claims = await (await getAuth().getUser(decoded.uid)).customClaims;
-    req.user = {
-      ...decoded,
-      userId: claims.eatlyUserId,
-    };
-    next();
+    if(persist) {
+      req.user = {
+        ...decoded,
+        userId: claims.eatlyUserId,
+      };
+      return next();
+    }
+    return res.status(200).send({
+      success: true,
+    });
   } catch(error) {
     logger.log({ message: 'User not authorized to make this request' }, error);
     return res.status(401).send({

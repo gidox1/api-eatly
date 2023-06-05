@@ -21,6 +21,12 @@ export default async (app) => {
   (req, res, next) => requestValidator(req.body, loginUserValidation, res, next),
   (req, res) => userController.login(req, res));
 
+
+  /**
+   * Get user
+   */
+  app.post(`/${routePrefix}/verifyToken`, (req, res, next) => authValidation(req, res, next, false));
+
   /**
    * Get user
    */
